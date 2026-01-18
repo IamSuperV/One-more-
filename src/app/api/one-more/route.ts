@@ -5,8 +5,14 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(request: Request) {
     try {
+        const { searchParams } = new URL(request.url);
+        const excludeId = searchParams.get('exclude');
+
         const items = await prisma.content.findMany({
-            where: { approved: true },
+            where: {
+                approved: true,
+                id: excludeId ? { not: excludeId } : undefined
+            },
             select: { id: true, weight: true }
         });
 
@@ -15,7 +21,7 @@ export async function GET(request: Request) {
         }
 
         // Weighted random selection
-        const totalWeight = items.reduce((sum, item) => sum + item.weight, 0);
+        const totalWeight = items.reduce((sum: number, item: { weight: number }) => sum + item.weight, 0);
         let random = Math.random() * totalWeight;
         let selectedId = items[0].id;
 

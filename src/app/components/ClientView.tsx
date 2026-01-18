@@ -35,7 +35,8 @@ export default function ClientView({ initialContent }: { initialContent: Content
         previousAbortController.current = controller;
 
         try {
-            const res = await fetch('/api/one-more', { signal: controller.signal, cache: 'no-store' });
+            const url = content?.id ? `/api/one-more?exclude=${content.id}` : '/api/one-more';
+            const res = await fetch(url, { signal: controller.signal, cache: 'no-store' });
             if (res.ok) {
                 const data = await res.json();
                 setNextContent(data);
