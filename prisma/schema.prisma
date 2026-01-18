@@ -1,0 +1,24 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Content {
+  id        String   @id @default(uuid())
+  text      String
+  type      String   // thought, confession, question, fact, story
+  weight    Int      @default(1)
+  approved  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model Submission {
+  id        String   @id @default(uuid())
+  text      String
+  approved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

@@ -1,0 +1,110 @@
+:root {
+  --bg-color: #0b0b0b;
+  --text-color: #e5e5e5;
+  --subtle-text: #666;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  max-height: 100vh;
+  overflow: hidden;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  background: none;
+  border: none;
+  color: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.center-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  padding: 2rem;
+  text-align: center;
+}
+
+.content-text {
+  font-size: 2rem;
+  line-height: 1.4;
+  margin-bottom: 4rem;
+  opacity: 0;
+  animation: fadeIn 0.4s ease-out forwards;
+  max-width: 600px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-5px); }
+}
+
+.one-more-btn {
+  font-size: 1rem;
+  letter-spacing: 0.2rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  opacity: 0.7;
+  transition: opacity 0.2s, transform 0.1s;
+  padding: 1rem 2rem;
+}
+
+.one-more-btn:hover {
+  opacity: 1;
+}
+
+.one-more-btn:active {
+  transform: scale(0.95);
+}
+
+.submission-link {
+  position: absolute;
+  bottom: 2rem;
+  font-size: 0.8rem;
+  opacity: 0.2;
+  transition: opacity 0.2s;
+}
+
+.submission-link:hover {
+  opacity: 0.6;
+}
