@@ -18,6 +18,34 @@ export default function ClientView({ initialContent }: { initialContent: Content
     const [inputText, setInputText] = useState('');
     const [submittingState, setSubmittingState] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
 
+    // Behavioral State
+    const [clickCount, setClickCount] = useState(0);
+    const [isReturnUser, setIsReturnUser] = useState(false);
+
+    useEffect(() => {
+        // Silent Memory Check
+        const storedClicks = localStorage.getItem('om_clicks');
+        const lastVisit = localStorage.getItem('om_last');
+
+        if (storedClicks) setClickCount(parseInt(storedClicks));
+        if (lastVisit) {
+            const hours = (Date.now() - parseInt(lastVisit)) / 1000 / 60 / 60;
+            if (hours > 24) setIsReturnUser(true); // Flag for potential use
+        }
+
+        localStorage.setItem('om_last', Date.now().toString());
+    }, []);
+
+    const getMetaContent = (count: number): ContentItem | null => {
+        // The "Fourth Wall" breaks
+        if (count === 5) return { id: 'm1', text: "Curiosity is a trap.", type: "meta" };
+        if (count === 12) return { id: 'm2', text: "You can leave anytime.", type: "meta" };
+        if (count === 25) return { id: 'm3', text: "What are you looking for?", type: "meta" };
+        if (count === 50) return { id: 'm4', text: "There is no end.", type: "meta" };
+        if (count === 100) return { id: 'm5', text: "You enjoy this.", type: "meta" };
+        return null;
+    };
+
     // Preload next content
     useEffect(() => {
         if (!previousAbortController.current) {
@@ -48,20 +76,37 @@ export default function ClientView({ initialContent }: { initialContent: Content
 
     const handleNext = () => {
         if (isSubmittingMode) return;
-        if (!nextContent) return; // Should we wait? Or show loading?
 
         // Haptic
         if (typeof navigator !== 'undefined' && navigator.vibrate) {
             navigator.vibrate(5);
         }
 
+        // Update State
+        const newCount = clickCount + 1;
+        setClickCount(newCount);
+        localStorage.setItem('om_clicks', newCount.toString());
+        localStorage.setItem('om_last', Date.now().toString());
+
+        // Check for Meta-Injection
+        const meta = getMetaContent(newCount);
+        const contentToShow = meta || nextContent;
+
+        if (!contentToShow) return; // Wait if nothing ready
+
         setIsFadingOut(true);
 
         setTimeout(() => {
-            setContent(nextContent);
+            setContent(contentToShow);
             setIsFadingOut(false);
-            setNextContent(null); // Clear buffer
-            // fetchNext triggered by useEffect
+
+            // If we used the preloaded content, clear it. 
+            // If we used query meta, we keep nextContent buffered for NEXT click.
+            if (!meta) {
+                setNextContent(null);
+            }
+
+            // fetchNext is handled by useEffect on content change
         }, 200);
     };
 
